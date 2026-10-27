@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <meta name="description" content="Find your own rhythm in Kyrgyzstan. Thoughtful journeys through mountain passes, alpine lakes, and nomadic traditions.">
+  <title> Travel Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="translations.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Ala-Too home"><span class="brand-mark">A</span><span>Travel Horizon<span class="brand-period">.</span></span></a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span></button>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#journeys" data-i18n="journeysNav">Journeys</a>
+      <a href="#places" data-i18n="placesNav">Places</a>
+      <a href="#about" data-i18n="ourWayNav">Our way</a>
+      <a class="admin-nav-link" href="/admin.html"><span data-i18n="adminNav">Admin</span> <span aria-hidden="true">↗</span></a>
+      <div class="language-switch">
+        <button class="language-trigger" id="language-trigger" type="button" aria-label="Choose language" aria-haspopup="menu" aria-expanded="false" aria-controls="language-options">
+          <span id="current-language">EN</span><span class="language-caret" aria-hidden="true">⌄</span>
+        </button>
+        <div class="language-options" id="language-options" role="menu" aria-label="Choose language" hidden>
+          <button type="button" role="menuitemradio" data-language="en" aria-checked="true"><span>English</span><span>EN</span></button>
+          <button type="button" role="menuitemradio" data-language="ky" aria-checked="false"><span>Кыргызча</span><span>KG</span></button>
+          <button type="button" role="menuitemradio" data-language="ru" aria-checked="false"><span>Русский</span><span>RU</span></button>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="#planner"><span data-i18n="planTrip">Plan your trip</span> <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main>
+    <section class="hero" id="home" aria-label="Discover Kyrgyzstan">
+      <img class="hero-image" src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2200&q=90" alt="Snow-capped peaks rising above a green mountain valley">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="eyebrow hero-eyebrow"><span class="eyebrow-line"></span> <span data-content="hero.eyebrow">Kyrgyzstan, at your own pace</span></p>
+        <h1><span data-content="hero.titleLine">Find your</span><br><em data-content="hero.titleEmphasis">wild.</em></h1>
+        <p class="hero-copy"><span data-content="hero.copyFirst">High mountain air. A yurt on the horizon.</span><br><span data-content="hero.copySecond">Somewhere you’ve never been, and somehow know.</span></p>
+        <a class="round-link" href="#journeys" aria-label="Explore journeys"><span data-i18n="exploreJourneys">Explore journeys</span><span class="round-arrow">↓</span></a>
+      </div>
+      <div class="hero-note"><span class="note-dot"></span> <span data-i18n="heroNote">90% mountains. 100% unforgettable.</span></div>
+      <div class="hero-index">41° 12′ N &nbsp; 74° 46′ E</div>
+    </section>
+
+    <section class="intro section-wrap" id="about">
+      <div class="intro-label"><span data-i18n="feelingLabel">01 / THE FEELING</span><span class="small-rule"></span></div>
+      <div class="intro-main">
+        <p class="section-kicker" data-i18n="introKicker">A little further from ordinary</p>
+        <h2><span data-i18n="introTitleFirst">Not just a place</span><br><span data-i18n="introTitleSecond">to <em>see.</em> A place to feel.</span></h2>
+        <div class="intro-bottom">
+          <p data-i18n="introBody">Between the Tian Shan peaks and the open steppe, Kyrgyzstan moves to a different rhythm. We’ll help you find it — one mountain road, shared meal, and starry night at a time.</p>
+          <a class="text-link" href="#places"><span data-i18n="introLink">Get to know the country</span> <span>↗</span></a>
+        </div>
+      </div>
+      <div class="intro-stamp" aria-label="Made for the long way around"><span data-i18n="introStamp">THE<br>LONG WAY<br>AROUND</span><span class="stamp-star">✳</span></div>
+    </section>
+
+    <section class="journeys section-wrap" id="journeys">
+      <div class="section-heading">
+        <div><p class="section-kicker" data-i18n="journeysKicker">Good days, well spent</p><h2><span data-i18n="journeysTitleFirst">Choose your</span> <em data-i18n="journeysTitleKind">kind</em> <span data-i18n="journeysTitleLast">of wild.</span></h2></div>
+        <a class="text-link desktop-link" href="#planner"><span data-i18n="findRoute">Find your route</span> <span>↗</span></a>
+      </div>
+      <div class="journey-grid">
+        <article class="journey-card journey-card-large">
+          <a class="journey-image" href="#planner" aria-label="Explore Issyk-Kul" data-content-title="journeys.0.title">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Lake_Issyk-Kul%2C_Kyrgyzstan.jpg" alt="Lake Issyk-Kul beneath the mountains of Kyrgyzstan" data-content-image="journeys.0.image" data-content-alt="journeys.0.alt" loading="lazy">
+            <span class="card-number">01</span><span class="card-arrow">↗</span>
+          </a>
+          <div class="card-meta"><span data-content="journeys.0.label">THE GREAT LAKE</span><span data-content="journeys.0.duration">4—7 DAYS</span></div>
+          <h3 data-content="journeys.0.title">Issyk-Kul</h3><p data-content="journeys.0.description">Swim in clear water and follow the shore beneath the snow-bright Tian Shan.</p>
+        </article>
+        <article class="journey-card journey-card-offset">
+          <a class="journey-image" href="#planner" aria-label="Explore Ala-Archa" data-content-title="journeys.1.title">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Pix113._Ala-Archa_National_Park.jpg" alt="Mountain valley in Ala-Archa National Park near Bishkek" data-content-image="journeys.1.image" data-content-alt="journeys.1.alt" loading="lazy">
+            <span class="card-number">02</span><span class="card-arrow">↗</span>
+          </a>
+          <div class="card-meta"><span data-content="journeys.1.label">TRAILS NEAR BISHKEK</span><span data-content="journeys.1.duration">1—3 DAYS</span></div>
+          <h3 data-content="journeys.1.title">Ala-Archa</h3><p data-content="journeys.1.description">Walk forested valleys and high trails below the park’s jagged Tian Shan peaks.</p>
+        </article>
+        <article class="journey-card">
+          <a class="journey-image" href="#planner" aria-label="Explore Sary-Chelek" data-content-title="journeys.2.title">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Sary_Chelek_Lake.jpg" alt="Sary-Chelek Lake among the forested mountains of western Kyrgyzstan" data-content-image="journeys.2.image" data-content-alt="journeys.2.alt" loading="lazy">
+            <span class="card-number">03</span><span class="card-arrow">↗</span>
+          </a>
+          <div class="card-meta"><span data-content="journeys.2.label">WESTERN KYRGYZSTAN</span><span data-content="journeys.2.duration">2—4 DAYS</span></div>
+          <h3 data-content="journeys.2.title">Sary-Chelek</h3><p data-content="journeys.2.description">Find a quiet, forest-ringed lake in the Sary-Chelek Biosphere Reserve.</p>
+        </article>
+      </div>
+      <a class="text-link mobile-link" href="#planner"><span data-i18n="findRoute">Find your route</span> <span>↗</span></a>
+    </section>
+
+    <section class="places" id="places">
+      <div class="places-image-wrap"><img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Song-Kul%2C_Kyrgyzstan_%2829641420357%29.jpg" alt="Song-Kol alpine lake and open mountain pasture in Kyrgyzstan" data-content-image="land.image" data-content-alt="land.alt" loading="lazy"><div class="image-caption" data-content="land.caption">Somewhere under a very big sky</div></div>
+      <div class="places-copy"><p class="section-kicker" data-i18n="landLabel">02 / THE LAND</p><h2><span data-content="land.titleLine">Big skies.</span><br><em data-content="land.titleEmphasis">Open roads.</em></h2><p data-content="land.description">From the red cliffs of Jeti-Ögüz to the silence of Song-Kul, every turn gives you a new reason to take the long way.</p><a class="text-link light-link" href="#planner"><span data-i18n="landLink">See where you could go</span> <span>↗</span></a><div class="places-coordinates" data-i18n="landCoordinates">ISSYK-KUL · SONG-KUL · ALA-KUL</div></div>
+    </section>
+
+    <section class="planner section-wrap" id="planner">
+      <div class="planner-aside"><p class="section-kicker" data-i18n="plannerLabel">03 / YOUR TURN</p><h2><span data-i18n="plannerTitleFirst">Make it</span><br><em data-i18n="plannerTitleLast">yours.</em></h2><p data-i18n="plannerCopy">No fixed package. No rush to tick boxes. Just a starting point for the trip that feels like you.</p><div class="planner-aside-foot"><span class="planner-star">✳</span><span data-i18n="plannerStamp">MADE FOR THE<br>WAY YOU WANDER</span></div></div>
+      <div class="planner-panel">
+        <div class="panel-top"><span data-i18n="plannerPanelTitle">BUILD A LITTLE DAYDREAM</span><span>01 — 03</span></div>
+        <form id="planner-form">
+          <fieldset><legend data-i18n="durationLegend">How long have you got?</legend><div class="choice-row duration-options"><label class="choice"><input type="radio" name="duration" value="3" checked><span data-i18n="duration3">3 days</span></label><label class="choice"><input type="radio" name="duration" value="5"><span data-i18n="duration5">5 days</span></label><label class="choice"><input type="radio" name="duration" value="7"><span data-i18n="duration7">7+ days</span></label></div></fieldset>
+          <fieldset><legend data-i18n="moodLegend">What sounds like you?</legend><div class="choice-row mood-options"><label class="choice"><input type="radio" name="mood" value="lakes" checked><span data-i18n="moodLakes">✳ &nbsp; Lakes & slow days</span></label><label class="choice"><input type="radio" name="mood" value="hiking"><span data-i18n="moodHiking">↗ &nbsp; Trails & big views</span></label><label class="choice"><input type="radio" name="mood" value="culture"><span data-i18n="moodCulture">⌂ &nbsp; Culture & nomad life</span></label></div></fieldset>
+          <button class="submit-button" type="submit"><span data-i18n="plannerSubmit">Find my starting point</span> <span>↗</span></button>
+        </form>
+        <div class="planner-result" id="planner-result" aria-live="polite" hidden></div>
+      </div>
+    </section>
+
+    <section class="quote-band"><span class="quote-mark">“</span><blockquote><span data-i18n="quoteFirst">Hospitality here isn’t a service.</span><br><span data-i18n="quoteSecond">It’s just how people are.</span></blockquote><span class="quote-caption" data-i18n="quoteCaption">A SMALL THING THAT STAYS WITH YOU</span></section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="#home"><span class="brand-mark">A</span><span>Travel Horiszon<span class="brand-period">.</span></span></a>
+    <p data-i18n="footerTagline">For the roads that don’t need a reason.</p>
+    <div class="footer-links"><a href="#journeys" data-i18n="journeysNav">Journeys</a><a href="#places" data-i18n="placesNav">Places</a><a href="mailto:hello@ala-too.travel"><span data-i18n="footerContact">Say hello</span> ↗</a></div>
+    <span class="copyright" data-i18n="footerCopyright">KYRGYZSTAN, ALWAYS &nbsp;·&nbsp; © 2026 ALA-TOO</span>
+  </footer>
+</body>
+</html>

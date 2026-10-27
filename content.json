@@ -1,0 +1,131 @@
+{
+  "hero": {
+    "eyebrow": "Kyrgyzstan, at your own place",
+    "titleLine": "Find your",
+    "titleEmphasis": "wild.",
+    "copyFirst": "High mountain air. A yurt on the horizon.",
+    "copySecond": "Somewhere you’ve never been, and somehow know."
+  },
+  "journeys": [
+    {
+      "label": "THE GREAT LAKE",
+      "duration": "5—7 DAYS",
+      "title": "Issyl-Kul",
+      "description": "Swim in clear water and follow the shore beneath the snow-bright Tian Shan.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Lake_Issyk-Kul%2C_Kyrgyzstan.jpg",
+      "alt": "Lake Issyk-Kul beneath the mountains of Kyrgyzstan"
+    },
+    {
+      "label": "TRAILS NEAR BISHKEK",
+      "duration": "1—3 DAYS",
+      "title": "Ala-Archa",
+      "description": "Walk forested valleys and high trails below the park’s jagged Tian Shan peaks.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Pix113._Ala-Archa_National_Park.jpg",
+      "alt": "Mountain valley in Ala-Archa National Park near Bishkek"
+    },
+    {
+      "label": "WESTERN KYRGYZSTAN",
+      "duration": "2—4 DAYS",
+      "title": "Sary-Chelek",
+      "description": "Find a quiet, forest-ringed lake in the Sary-Chelek Biosphere Reserve.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/87/Sary_Chelek_Lake.jpg",
+      "alt": "Sary-Chelek Lake among the forested mountains of western Kyrgyzstan"
+    }
+  ],
+  "land": {
+    "titleLine": "Big skies.",
+    "titleEmphasis": "Open roads.",
+    "description": "From the red cliffs of Jeti-Ögüz to the silence of Song-Kul, every turn gives you a new reason to take the long way.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/5/56/Song-Kul%2C_Kyrgyzstan_%2829641420357%29.jpg",
+    "alt": "Song-Kol alpine lake and open mountain pasture in Kyrgyzstan",
+    "caption": "Somewhere under a very big sky"
+  },
+  "locales": {
+    "ru": {
+      "hero": {
+        "eyebrow": "Кыргызстан в вашем ритме",
+        "titleLine": "Почувствуйте",
+        "titleEmphasis": "свободу.",
+        "copyFirst": "Горный воздух. Юрта на горизонте.",
+        "copySecond": "Место, где вы ещё не были, но будто уже знаете его."
+      },
+      "journeys": [
+        {
+          "label": "БОЛЬШОЕ ОЗЕРО",
+          "duration": "4—7 ДНЕЙ",
+          "title": "Иссык-Куль",
+          "description": "Искупайтесь в чистой воде и проедьте вдоль берега у заснеженных хребтов Тянь-Шаня.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Lake_Issyk-Kul%2C_Kyrgyzstan.jpg",
+          "alt": "Озеро Иссык-Куль у гор Кыргызстана"
+        },
+        {
+          "label": "ТРОПЫ У БИШКЕКА",
+          "duration": "1—3 ДНЯ",
+          "title": "Ала-Арча",
+          "description": "Пройдите по лесным долинам и высокогорным тропам среди суровых вершин Тянь-Шаня.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Pix113._Ala-Archa_National_Park.jpg",
+          "alt": "Горная долина национального парка Ала-Арча недалеко от Бишкека"
+        },
+        {
+          "label": "ЗАПАДНЫЙ КЫРГЫЗСТАН",
+          "duration": "2—4 ДНЯ",
+          "title": "Сары-Челек",
+          "description": "Откройте тихое озеро среди лесов биосферного заповедника Сары-Челек.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/8/87/Sary_Chelek_Lake.jpg",
+          "alt": "Озеро Сары-Челек среди лесистых гор на западе Кыргызстана"
+        }
+      ],
+      "land": {
+        "titleLine": "Большое небо.",
+        "titleEmphasis": "Открытые дороги.",
+        "description": "От красных скал Джети-Огуз до тишины Сон-Куля каждый поворот зовёт выбрать дорогу подлиннее.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/56/Song-Kul%2C_Kyrgyzstan_%2829641420357%29.jpg",
+        "alt": "Song-Kol alpine lake and open mountain pasture in Kyrgyzstan",
+        "caption": "Где-то под большим небом"
+      }
+    },
+    "ky": {
+      "hero": {
+        "eyebrow": "Кыргызстанды өз ыргагыңызда ачыңыз",
+        "titleLine": "Жапайы",
+        "titleEmphasis": "жаратылыш.",
+        "copyFirst": "Тоонун таза абасы. Алыстан көрүнгөн боз үй.",
+        "copySecond": "Бейтааныш жер, бирок жүрөккө жакын."
+      },
+      "journeys": [
+        {
+          "label": "УЛУУ КӨЛ",
+          "duration": "4—7 КҮН",
+          "title": "Ыссык-Көл",
+          "description": "Тунук сууга түшүп, карлуу Теңир-Тоонун этегиндеги жээкти бойлой саякаттаңыз.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Lake_Issyk-Kul%2C_Kyrgyzstan.jpg",
+          "alt": "Кыргызстандын тоолорунун алдындагы Ысык-Көл"
+        },
+        {
+          "label": "БИШКЕККЕ ЖАКЫН ЖОЛДОР",
+          "duration": "1—3 КҮН",
+          "title": "Ала-Арча",
+          "description": "Токойлуу өрөөндөрдү жана Теңир-Тоонун чокуларына кеткен бийик жолдорду ачыңыз.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Pix113._Ala-Archa_National_Park.jpg",
+          "alt": "Бишкекке жакын Ала-Арча улуттук паркындагы тоо өрөөнү"
+        },
+        {
+          "label": "КЫРГЫЗСТАНДЫН БАТЫШЫ",
+          "duration": "2—4 КҮН",
+          "title": "Сары-Челек",
+          "description": "Сары-Челек биосфералык коругундагы токой курчаган тынч көлдү көрүңүз.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/8/87/Sary_Chelek_Lake.jpg",
+          "alt": "Кыргызстандын батышындагы токойлуу тоолор арасындагы Сары-Челек көлү"
+        }
+      ],
+      "land": {
+        "titleLine": "Кең асман.",
+        "titleEmphasis": "Ачык жолдор.",
+        "description": "Жети-Өгүздүн кызыл аскаларынан Сон-Көлдүн тынчтыгына чейин ар бир бурулуш узагыраак жолду тандоого чакырат.",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/56/Song-Kul%2C_Kyrgyzstan_%2829641420357%29.jpg",
+        "alt": "Song-Kol alpine lake and open mountain pasture in Kyrgyzstan",
+        "caption": "Кең асмандын алдындагы бир жер"
+      }
+    }
+  }
+}

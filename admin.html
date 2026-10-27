@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <title>Site editor · Travel Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <script src="translations.js" defer></script>
+  <script src="admin-language.js" defer></script>
+  <script src="content-editor.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <header class="admin-header">
+    <a class="brand" href="/" aria-label="Travel Horizon home"><span class="brand-mark">A</span><span>Travel Horizon<span class="brand-period">.</span></span></a>
+    <span class="header-label" data-admin-i18n="headerLabel">LOCAL SITE EDITOR</span>
+    <div class="admin-header-actions">
+      <div class="admin-language-switch">
+        <button class="admin-language-trigger" id="admin-language-trigger" type="button" aria-label="Choose language" aria-haspopup="menu" aria-expanded="false" aria-controls="admin-language-options"><span id="admin-current-language">EN</span><span aria-hidden="true">⌄</span></button>
+        <div class="admin-language-options" id="admin-language-options" role="menu" aria-label="Choose language" hidden>
+          <button type="button" role="menuitemradio" data-admin-language="en" aria-checked="true"><span>English</span><span>EN</span></button>
+          <button type="button" role="menuitemradio" data-admin-language="ky" aria-checked="false"><span>Кыргызча</span><span>KG</span></button>
+          <button type="button" role="menuitemradio" data-admin-language="ru" aria-checked="false"><span>Русский</span><span>RU</span></button>
+        </div>
+      </div>
+      <a class="back-link" href="/"><span data-admin-i18n="backToWebsite">Back to website</span> <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="login-view" id="login-view" aria-labelledby="login-title">
+      <p class="eyebrow" data-admin-i18n="privateWorkspace">PRIVATE WORKSPACE</p>
+      <h1 id="login-title" data-admin-html="loginTitle">Good to have<br><em>you back.</em></h1>
+      <p class="login-copy" data-admin-i18n="loginCopy">Sign in to edit website text, destinations, and photos.</p>
+      <form id="login-form">
+        <label for="password" data-admin-i18n="passwordLabel">Admin password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button class="primary-button" type="submit"><span data-admin-i18n="signIn">Sign in</span><span aria-hidden="true">↗</span></button>
+        <p class="form-message" id="login-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="editor-view" id="editor-view" aria-labelledby="editor-title" hidden>
+      <div class="editor-heading">
+        <div><p class="eyebrow" data-admin-i18n="privateWorkspace">PRIVATE WORKSPACE</p><h1 id="editor-title"><span data-admin-i18n="editorTitleFirst">Make it</span> <em data-admin-i18n="editorTitleLast">yours.</em></h1></div>
+        <div class="editor-actions">
+          <a class="preview-link" href="/" target="_blank" rel="noreferrer"><span data-admin-i18n="previewSite">Preview site</span> <span aria-hidden="true">↗</span></a>
+          <button class="quiet-button" id="logout-button" type="button" data-admin-i18n="signOut">Sign out</button>
+        </div>
+      </div>
+
+      <div class="editor-tabs" role="tablist" aria-label="Editor mode">
+        <button class="editor-tab is-active" id="content-tab" type="button" role="tab" aria-selected="true" aria-controls="content-panel" data-admin-i18n="websiteContent">Website content</button>
+        <button class="editor-tab" id="source-tab" type="button" role="tab" aria-selected="false" aria-controls="source-panel" data-admin-i18n="sourceFiles">Source files</button>
+      </div>
+
+      <section class="editor-panel content-panel" id="content-panel" role="tabpanel" aria-labelledby="content-tab">
+        <form id="content-form">
+          <section class="content-block">
+            <div class="content-block-heading"><p class="eyebrow" data-admin-i18n="firstImpression">01 / FIRST IMPRESSION</p><h2 data-admin-i18n="homepageIntro">Homepage intro</h2></div>
+            <div class="content-fields">
+              <label><span data-admin-i18n="smallHeading">Small heading</span><input data-content-path="hero.eyebrow" maxlength="120"></label>
+              <label><span data-admin-i18n="titleFirstLine">Title, first line</span><input data-content-path="hero.titleLine" maxlength="80"></label>
+              <label><span data-admin-i18n="titleEmphasizedLine">Title, emphasized line</span><input data-content-path="hero.titleEmphasis" maxlength="80"></label>
+              <label><span data-admin-i18n="introLineOne">Intro line one</span><input data-content-path="hero.copyFirst" maxlength="180"></label>
+              <label class="wide-field"><span data-admin-i18n="introLineTwo">Intro line two</span><input data-content-path="hero.copySecond" maxlength="180"></label>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <div class="content-block-heading"><p class="eyebrow" data-admin-i18n="goodDays">02 / GOOD DAYS, WELL SPENT</p><h2 data-admin-i18n="destinationCards">Destination cards</h2></div>
+            <div class="journey-fields" id="journey-fields"></div>
+          </section>
+
+          <section class="content-block">
+            <div class="content-block-heading"><p class="eyebrow" data-admin-i18n="theLand">03 / THE LAND</p><h2 data-admin-i18n="bigSkies">Big skies. Open roads.</h2></div>
+            <div class="content-fields">
+              <label><span data-admin-i18n="titleLabel">Title</span><input data-content-path="land.titleLine" maxlength="100"></label>
+              <label><span data-admin-i18n="emphasizedTitle">Emphasized title</span><input data-content-path="land.titleEmphasis" maxlength="100"></label>
+              <label class="wide-field"><span data-admin-i18n="descriptionLabel">Description</span><textarea data-content-path="land.description" rows="3" maxlength="600"></textarea></label>
+              <label><span data-admin-i18n="photoCaption">Photo caption</span><input data-content-path="land.caption" maxlength="180"></label>
+              <label class="wide-field"><span data-admin-i18n="photoAccessibility">Photo description for accessibility</span><input data-content-path="land.alt" maxlength="240"></label>
+            </div>
+            <div class="land-photo" id="land-photo"></div>
+          </section>
+
+          <div class="content-actions">
+            <p class="file-state" id="content-state" role="status" aria-live="polite" data-admin-i18n="loadingContent">Loading website content</p>
+            <button class="save-button" id="content-save" type="submit" disabled><span data-admin-i18n="saveWebsiteChanges">Save website changes</span><span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+      </section>
+
+      <section class="editor-panel source-panel" id="source-panel" role="tabpanel" aria-labelledby="source-tab" hidden>
+        <div class="editor-toolbar">
+          <label for="file-select" data-admin-i18n="editing">Editing</label>
+          <select id="file-select" aria-label="Choose a site file"></select>
+          <span class="file-state" id="file-state" role="status">Loading files</span>
+          <button class="save-button" id="save-button" type="button" disabled><span data-admin-i18n="saveSource">Save source</span><span aria-hidden="true">↗</span></button>
+        </div>
+        <div class="editor-frame">
+          <div class="editor-gutter" id="line-numbers" aria-hidden="true">1</div>
+          <textarea id="file-editor" aria-label="Selected website file contents" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" disabled></textarea>
+        </div>
+        <p class="editor-note" data-admin-i18n="advancedNote">Advanced: these edits change the project source directly. Save a backup first.</p>
+      </section>
+    </section>
+  </main>
+  <footer class="admin-footer"><span>TRAVEL HORIZON · KYRGYZSTAN</span><span data-admin-i18n="localAccess">LOCAL ACCESS ONLY</span></footer>
+</body>
+</html>
