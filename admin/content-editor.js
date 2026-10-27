@@ -199,11 +199,11 @@
         makeField('tripDuration', `journeys.${index}.duration`, journey.duration),
         makeField('descriptionLabel', `journeys.${index}.description`, journey.description, true),
         makeField('photoAccessibility', `journeys.${index}.alt`, journey.alt),
-        makePhotoEditor(`${journey.title} photo`, `journeys.${index}.image`, journey.image, journey.alt)
+        makePhotoEditor(journey.title, `journeys.${index}.image`, journey.image, journey.alt)
       );
       journeyFields.append(group);
     });
-    landPhoto.replaceChildren(makePhotoEditor('Song-Kol section photo', 'land.image', draft.land.image, draft.land.alt));
+    landPhoto.replaceChildren(makePhotoEditor('Song-Kol section', 'land.image', draft.land.image, draft.land.alt));
     contentSave.disabled = true;
     setStatus('savedStatus');
   }

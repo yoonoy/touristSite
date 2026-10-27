@@ -5,6 +5,11 @@ const path = require('node:path');
 
 const HOST = '127.0.0.1';
 const PORT = Number(process.env.PORT || 4173);
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const ADMIN_DIR = path.join(__dirname, 'admin');
+const DATA_DIR = path.join(__dirname, 'data');
+const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
+const CONTENT_FILE = path.join(DATA_DIR, 'content.json');
 const SESSION_TTL = 12 * 60 * 60 * 1000;
 const MAX_BODY_SIZE = 1_000_000;
 const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
@@ -15,17 +20,17 @@ const IMAGE_TYPES = new Map([
 ]);
 const EDITABLE_FILES = new Set(['index.html', 'styles.css', 'script.js']);
 const PUBLIC_FILES = new Map([
-  ['/', ['index.html', 'text/html; charset=utf-8']],
-  ['/index.html', ['index.html', 'text/html; charset=utf-8']],
-  ['/admin', ['admin.html', 'text/html; charset=utf-8']],
-  ['/admin.html', ['admin.html', 'text/html; charset=utf-8']],
-  ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
-  ['/script.js', ['script.js', 'text/javascript; charset=utf-8']],
-  ['/translations.js', ['translations.js', 'text/javascript; charset=utf-8']],
-  ['/admin.css', ['admin.css', 'text/css; charset=utf-8']],
-  ['/admin.js', ['admin.js', 'text/javascript; charset=utf-8']],
-  ['/admin-language.js', ['admin-language.js', 'text/javascript; charset=utf-8']],
-  ['/content-editor.js', ['content-editor.js', 'text/javascript; charset=utf-8']]
+  ['/', [path.join(PUBLIC_DIR, 'index.html'), 'text/html; charset=utf-8']],
+  ['/index.html', [path.join(PUBLIC_DIR, 'index.html'), 'text/html; charset=utf-8']],
+  ['/admin', [path.join(ADMIN_DIR, 'admin.html'), 'text/html; charset=utf-8']],
+  ['/admin.html', [path.join(ADMIN_DIR, 'admin.html'), 'text/html; charset=utf-8']],
+  ['/styles.css', [path.join(PUBLIC_DIR, 'styles.css'), 'text/css; charset=utf-8']],
+  ['/script.js', [path.join(PUBLIC_DIR, 'script.js'), 'text/javascript; charset=utf-8']],
+  ['/translations.js', [path.join(PUBLIC_DIR, 'translations.js'), 'text/javascript; charset=utf-8']],
+  ['/admin.css', [path.join(ADMIN_DIR, 'admin.css'), 'text/css; charset=utf-8']],
+  ['/admin.js', [path.join(ADMIN_DIR, 'admin.js'), 'text/javascript; charset=utf-8']],
+  ['/admin-language.js', [path.join(ADMIN_DIR, 'admin-language.js'), 'text/javascript; charset=utf-8']],
+  ['/content-editor.js', [path.join(ADMIN_DIR, 'content-editor.js'), 'text/javascript; charset=utf-8']]
 ]);
 const sessions = new Map();
 const loginAttempts = new Map();
@@ -197,7 +202,7 @@ async function handleRequest(request, response) {
   }
 
   if (url.pathname === '/api/content' && request.method === 'GET') {
-    const content = JSON.parse(await readFile(path.join(__dirname, 'content.json'), 'utf8'));
+    const content = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
     sendJson(response, 200, { content });
     return;
   }
@@ -214,12 +219,11 @@ async function handleRequest(request, response) {
       sendJson(response, 400, { error: 'Some text or photo values are invalid.' });
       return;
     }
-    const contentPath = path.join(__dirname, 'content.json');
-    const savedContent = JSON.parse(await readFile(contentPath, 'utf8'));
+    const savedContent = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
     const nextContent = locale === 'en'
       ? { ...savedContent, ...body.content }
       : { ...savedContent, locales: { ...savedContent.locales, [locale]: body.content } };
-    await writeJsonFile(contentPath, nextContent);
+    await writeJsonFile(CONTENT_FILE, nextContent);
     sendJson(response, 200, { ok: true });
     return;
   }
@@ -244,16 +248,15 @@ async function handleRequest(request, response) {
       return;
     }
     const fileName = `${randomBytes(16).toString('hex')}.${imageType.extension}`;
-    const uploadDirectory = path.join(__dirname, 'uploads');
-    await mkdir(uploadDirectory, { recursive: true });
-    await writeFile(path.join(uploadDirectory, fileName), image, { flag: 'wx' });
+    await mkdir(UPLOAD_DIR, { recursive: true });
+    await writeFile(path.join(UPLOAD_DIR, fileName), image, { flag: 'wx' });
     sendJson(response, 201, { url: `/uploads/${fileName}` });
     return;
   }
 
   const uploadName = url.pathname.match(/^\/uploads\/([a-f0-9]{32}\.(?:jpg|png|webp))$/)?.[1];
   if (request.method === 'GET' && uploadName) {
-    const image = await readFile(path.join(__dirname, 'uploads', uploadName));
+    const image = await readFile(path.join(UPLOAD_DIR, uploadName));
     const extension = path.extname(uploadName);
     const mimeType = extension === '.jpg' ? 'image/jpeg' : extension === '.png' ? 'image/png' : 'image/webp';
     response.writeHead(200, { 'Content-Type': mimeType, 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' });
@@ -270,7 +273,7 @@ async function handleRequest(request, response) {
   const fileName = safeFileName(url.pathname);
   if (fileName && request.method === 'GET') {
     if (!requireSession(request, response)) return;
-    const content = await readFile(path.join(__dirname, fileName), 'utf8');
+    const content = await readFile(path.join(PUBLIC_DIR, fileName), 'utf8');
     sendJson(response, 200, { name: fileName, content });
     return;
   }
@@ -286,7 +289,7 @@ async function handleRequest(request, response) {
       sendJson(response, 400, { error: 'File content must be text.' });
       return;
     }
-    const filePath = path.join(__dirname, fileName);
+    const filePath = path.join(PUBLIC_DIR, fileName);
     const tempPath = `${filePath}.${randomBytes(6).toString('hex')}.tmp`;
     await writeFile(tempPath, body.content, { encoding: 'utf8', flag: 'wx' });
     await rename(tempPath, filePath);
@@ -296,7 +299,7 @@ async function handleRequest(request, response) {
 
   if (request.method === 'GET' && PUBLIC_FILES.has(url.pathname)) {
     const [fileName, contentType] = PUBLIC_FILES.get(url.pathname);
-    const content = await readFile(path.join(__dirname, fileName));
+    const content = await readFile(fileName);
     response.writeHead(200, {
       'Content-Type': contentType,
       'Cache-Control': 'no-store',
