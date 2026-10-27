@@ -17,7 +17,7 @@ The admin panel includes a visual editor for homepage and destination text, phot
 Use Node.js 18 or newer. Set an admin password of at least 5 characters and start the server from this project folder. Short passwords are only suitable for local testing:
 
 ```sh
-ADMIN_PASSWORD='' npm start
+This site requires admin password to get access to edit
 ```
 
 Open the public website at <http://127.0.0.1:4173> and the editor at <http://127.0.0.1:4173/admin>.
