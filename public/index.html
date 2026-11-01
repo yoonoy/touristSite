@@ -21,7 +21,7 @@
       <a href="#journeys" data-i18n="journeysNav">Journeys</a>
       <a href="#places" data-i18n="placesNav">Places</a>
       <a href="#about" data-i18n="ourWayNav">Our way</a>
-      <a class="admin-nav-link" href="/admin.html"><span data-i18n="adminNav">Admin</span> <span aria-hidden="true">↗</span></a>
+      <a class="admin-nav-link" href="/admin"><span data-i18n="adminNav">Admin</span> <span aria-hidden="true">↗</span></a>
       <div class="language-switch">
         <button class="language-trigger" id="language-trigger" type="button" aria-label="Choose language" aria-haspopup="menu" aria-expanded="false" aria-controls="language-options">
           <span id="current-language">EN</span><span class="language-caret" aria-hidden="true">⌄</span>
@@ -116,6 +116,29 @@
     </section>
 
     <section class="quote-band"><span class="quote-mark">“</span><blockquote><span data-i18n="quoteFirst">Hospitality here isn’t a service.</span><br><span data-i18n="quoteSecond">It’s just how people are.</span></blockquote><span class="quote-caption" data-i18n="quoteCaption">A SMALL THING THAT STAYS WITH YOU</span></section>
+
+    <section class="consultation section-wrap" id="consultation">
+      <div class="consultation-heading">
+        <p class="section-kicker" data-i18n="consultationKicker">LET’S PLAN YOUR JOURNEY</p>
+        <h2 data-i18n="consultationTitle">Tell us where you want to go.</h2>
+        <p data-i18n="consultationCopy">Leave your details and our team will get in touch.</p>
+      </div>
+      <form class="consultation-form" id="consultation-form">
+        <label><span data-i18n="consultationName">Name</span><input name="name" type="text" autocomplete="given-name" maxlength="80" required></label>
+        <label><span data-i18n="consultationSurname">Surname</span><input name="surname" type="text" autocomplete="family-name" maxlength="80" required></label>
+        <label><span data-i18n="consultationPhone">Phone number</span><input name="phone" type="tel" autocomplete="tel" maxlength="25" required></label>
+        <label><span data-i18n="consultationDestination">Chosen destination</span>
+          <select name="destination" id="consultation-destination" required>
+            <option value="0">Issyk-Kul</option>
+            <option value="1">Ala-Archa</option>
+            <option value="2">Sary-Chelek</option>
+          </select>
+        </label>
+        <input class="consultation-trap" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="submit-button" type="submit"><span data-i18n="consultationSubmit">Request a consultation</span><span aria-hidden="true">↗</span></button>
+        <p class="consultation-status" id="consultation-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
   </main>
 
   <footer class="site-footer">

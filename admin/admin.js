@@ -153,5 +153,7 @@ if (window.location.protocol === 'file:') {
   loginForm.querySelector('button[type="submit"]').disabled = true;
   loginMessage.textContent = 'Sign-in needs the local server. Open http://127.0.0.1:4173/admin.html.';
 } else {
-  api('/api/files').then(openEditor).catch(() => {});
+  api('/api/files').then(openEditor).catch((error) => {
+    if (error.message !== 'Sign in to continue.') loginMessage.textContent = error.message;
+  });
 }

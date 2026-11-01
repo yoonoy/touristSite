@@ -18,6 +18,9 @@ const routes = {
 
 const plannerForm = document.querySelector('#planner-form');
 const result = document.querySelector('#planner-result');
+const consultationForm = document.querySelector('#consultation-form');
+const consultationStatus = document.querySelector('#consultation-status');
+const consultationDestination = document.querySelector('#consultation-destination');
 const languageButtons = document.querySelectorAll('[data-language]');
 const languageTrigger = document.querySelector('#language-trigger');
 const languageMenu = document.querySelector('#language-options');
@@ -74,6 +77,16 @@ function applyWebsiteContent() {
     if (typeof source === 'string') image.src = source;
     if (typeof alt === 'string') image.alt = alt;
   });
+  const selectedDestination = consultationDestination.value;
+  consultationDestination.replaceChildren(...websiteContent.journeys.map((journey, index) => {
+    const option = document.createElement('option');
+    option.value = String(index);
+    option.textContent = savedLocale.journeys?.[index]?.title || overrides.journeys?.[index]?.title || journey.title;
+    return option;
+  }));
+  if ([...consultationDestination.options].some((option) => option.value === selectedDestination)) {
+    consultationDestination.value = selectedDestination;
+  }
 }
 
 function renderPlannerResult(scroll = false) {
@@ -178,6 +191,32 @@ plannerForm.addEventListener('submit', (event) => {
   const formData = new FormData(plannerForm);
   lastPlannerChoice = { mood: formData.get('mood'), duration: formData.get('duration') };
   renderPlannerResult(true);
+});
+
+consultationForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const submitButton = consultationForm.querySelector('button[type="submit"]');
+  const translation = window.siteTranslations[currentLanguage].ui;
+  const values = Object.fromEntries(new FormData(consultationForm));
+  submitButton.disabled = true;
+  consultationStatus.dataset.state = '';
+  consultationStatus.textContent = '';
+  try {
+    const response = await fetch('/api/consultation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...values, locale: currentLanguage })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || translation.consultationError);
+    consultationForm.reset();
+    consultationStatus.textContent = translation.consultationSuccess;
+  } catch (error) {
+    consultationStatus.dataset.state = 'error';
+    consultationStatus.textContent = error.message || translation.consultationError;
+  } finally {
+    submitButton.disabled = false;
+  }
 });
 
 async function loadWebsiteContent() {

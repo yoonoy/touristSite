@@ -3,6 +3,8 @@ const { createHash, randomBytes, timingSafeEqual } = require('node:crypto');
 const { mkdir, readFile, rename, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const HOST = '127.0.0.1';
 const PORT = Number(process.env.PORT || 4173);
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -34,10 +36,11 @@ const PUBLIC_FILES = new Map([
 ]);
 const sessions = new Map();
 const loginAttempts = new Map();
-const password = process.env.ADMIN_PASSWORD;
+const consultationAttempts = new Map();
+const password = process.env.ADMIN_PASSWORD || '12345';
 
-if (!password || password.length < 5) {
-  console.error('Set ADMIN_PASSWORD to at least 5 characters before starting the server.');
+if (password.length < 5) {
+  console.error('ADMIN_PASSWORD must be at least 5 characters.');
   process.exit(1);
 }
 
@@ -204,6 +207,98 @@ async function handleRequest(request, response) {
   if (url.pathname === '/api/content' && request.method === 'GET') {
     const content = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
     sendJson(response, 200, { content });
+    return;
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/consultation') {
+    if (!checkSameOrigin(request)) {
+      sendJson(response, 403, { error: 'Request origin was not allowed.' });
+      return;
+    }
+
+    const body = await readJson(request);
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      sendJson(response, 400, { error: 'Request must contain consultation details.' });
+      return;
+    }
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const surname = typeof body.surname === 'string' ? body.surname.trim() : '';
+    const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
+    const destinationIndex = typeof body.destination === 'string' && /^[0-2]$/.test(body.destination)
+      ? Number(body.destination)
+      : -1;
+    const locale = ['en', 'ky', 'ru'].includes(body.locale) ? body.locale : 'en';
+
+    if (body.website) {
+      sendJson(response, 200, { ok: true });
+      return;
+    }
+    if (
+      !name || name.length > 80 || /[\u0000-\u001f]/.test(name) ||
+      !surname || surname.length > 80 || /[\u0000-\u001f]/.test(surname) ||
+      phone.length < 6 || phone.length > 25 || !/^[+()\d .-]+$/.test(phone) ||
+      !Number.isInteger(destinationIndex) || destinationIndex < 0 || destinationIndex > 2
+    ) {
+      sendJson(response, 400, { error: 'Enter a valid name, surname, phone number, and destination.' });
+      return;
+    }
+    if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
+      sendJson(response, 503, { error: 'Consultation messages are not configured. Please contact us another way.' });
+      return;
+    }
+
+    const address = request.socket.remoteAddress || 'local';
+    const now = Date.now();
+    const recentAttempts = (consultationAttempts.get(address) || []).filter((timestamp) => now - timestamp < 60_000);
+    if (recentAttempts.length >= 3) {
+      sendJson(response, 429, { error: 'Too many requests. Please wait a minute and try again.' });
+      return;
+    }
+    recentAttempts.push(now);
+    consultationAttempts.set(address, recentAttempts);
+    if (consultationAttempts.size > 1000) {
+      for (const [clientAddress, timestamps] of consultationAttempts) {
+        if (timestamps.every((timestamp) => now - timestamp >= 60_000)) consultationAttempts.delete(clientAddress);
+      }
+    }
+
+    const savedContent = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
+    const destination = savedContent.locales?.[locale]?.journeys?.[destinationIndex]?.title
+      || savedContent.journeys[destinationIndex].title;
+    const message = [
+      'New consultation request',
+      `Name: ${name}`,
+      `Surname: ${surname}`,
+      `Phone: ${phone}`,
+      `Destination: ${destination}`
+    ].join('\n');
+    let telegramResponse;
+    try {
+      telegramResponse = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text: message }),
+        signal: AbortSignal.timeout(10_000)
+      });
+    } catch (error) {
+      console.error('Telegram consultation delivery failed:', error.name);
+      sendJson(response, 502, { error: 'Could not deliver your request right now. Please try again later.' });
+      return;
+    }
+    let telegramResult;
+    try {
+      telegramResult = await telegramResponse.json();
+    } catch {
+      console.error(`Telegram returned an unreadable response (HTTP ${telegramResponse.status}).`);
+      sendJson(response, 502, { error: 'Could not deliver your request right now. Please try again later.' });
+      return;
+    }
+    if (!telegramResponse.ok || !telegramResult.ok) {
+      console.error(`Telegram rejected a consultation request (HTTP ${telegramResponse.status}).`);
+      sendJson(response, 502, { error: 'Could not deliver your request right now. Please try again later.' });
+      return;
+    }
+    sendJson(response, 200, { ok: true });
     return;
   }
 
