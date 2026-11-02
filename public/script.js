@@ -234,3 +234,22 @@ async function loadWebsiteContent() {
 
 applyLanguage(currentLanguage);
 loadWebsiteContent();
+
+const revealTargets = document.querySelectorAll(
+  '.intro, .journey-card, .places-copy, .planner-aside, .planner-panel, .quote-band, .consultation-heading, .consultation-form'
+);
+if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
+  revealTargets.forEach((element) => {
+    element.classList.add('reveal-on-scroll');
+    revealObserver.observe(element);
+  });
+} else {
+  revealTargets.forEach((element) => element.classList.add('is-visible'));
+}
