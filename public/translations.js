@@ -36,8 +36,8 @@ window.siteTranslations = {
       loadingContent: 'Loading website content', saveWebsiteChanges: 'Save website changes', editing: 'Editing',
       saveSource: 'Save source', advancedNote: 'Advanced: these edits change the project source directly. Save a backup first.',
       localAccess: 'LOCAL ACCESS ONLY', destinationTitle: 'Destination title', smallLabel: 'Small label',
-      tripDuration: 'Trip duration', photoHint: 'Choose a photo, drag one here, or focus this area and paste an image.',
-      photoUrl: 'Photo URL', choosePhoto: 'Choose photo', photoWord: 'photo', uploading: 'Uploading…', photoReady: 'Photo ready to save',
+      tripDuration: 'Trip duration', photoHint: 'Choose a photo from your computer, drag one here, or paste an image. Use JPEG, PNG, or WebP.',
+      photoUrl: 'Photo URL', choosePhoto: 'Choose from computer', photoWord: 'photo', uploading: 'Uploading…', photoReady: 'Photo uploaded. Click Save website changes below.',
       photoTooLarge: 'Photo must be under 8 MB.', photoTypes: 'Choose JPEG, PNG, or WebP.',
       savedStatus: 'All website changes saved', unsavedStatus: 'Unsaved website changes', savingStatus: 'Saving website changes…',
       savedRefresh: 'Saved. Refresh the preview to see your changes.'
@@ -98,8 +98,8 @@ window.siteTranslations = {
       loadingContent: 'Сайттын мазмуну жүктөлүүдө', saveWebsiteChanges: 'Сайттагы өзгөртүүлөрдү сактоо', editing: 'Түзөтүлүүдө',
       saveSource: 'Баштапкы кодду сактоо', advancedNote: 'Кошумча: өзгөртүүлөр түз эле долбоордун кодуна жазылат. Адегенде камдык көчүрмө жасаңыз.',
       localAccess: 'ЖЕРГИЛИКТҮҮ КИРҮҮ ГАНА', destinationTitle: 'Багыттын аталышы', smallLabel: 'Кичине белги',
-      tripDuration: 'Сапардын узактыгы', photoHint: 'Сүрөт тандаңыз, бул жерге сүйрөңүз же сүрөттү көчүрүп бул жерге чаптаңыз.',
-      photoUrl: 'Сүрөттүн URL дареги', choosePhoto: 'Сүрөт тандоо', photoWord: 'сүрөтү', uploading: 'Жүктөлүүдө…', photoReady: 'Сүрөт сактоого даяр',
+      tripDuration: 'Сапардын узактыгы', photoHint: 'Компьютериңизден сүрөт тандаңыз, бул жерге сүйрөңүз же чаптаңыз. JPEG, PNG же WebP форматы.',
+      photoUrl: 'Сүрөттүн URL дареги', choosePhoto: 'Компьютерден тандоо', photoWord: 'сүрөтү', uploading: 'Жүктөлүүдө…', photoReady: 'Сүрөт жүктөлдү. Төмөндөгү өзгөртүүлөрдү сактоо баскычын басыңыз.',
       photoTooLarge: 'Сүрөт 8 МБдан кичине болушу керек.', photoTypes: 'JPEG, PNG же WebP тандаңыз.',
       savedStatus: 'Сайттагы өзгөртүүлөр сакталды', unsavedStatus: 'Сактала элек өзгөртүүлөр бар', savingStatus: 'Сайттагы өзгөртүүлөр сакталууда…',
       savedRefresh: 'Сакталды. Көрүү үчүн сайтты жаңыртыңыз.'
@@ -168,8 +168,8 @@ window.siteTranslations = {
       loadingContent: 'Загрузка содержания сайта', saveWebsiteChanges: 'Сохранить изменения сайта', editing: 'Редактирование',
       saveSource: 'Сохранить исходный код', advancedNote: 'Дополнительно: изменения напрямую меняют файлы проекта. Сначала сохраните резервную копию.',
       localAccess: 'ТОЛЬКО ЛОКАЛЬНЫЙ ДОСТУП', destinationTitle: 'Название направления', smallLabel: 'Короткая метка',
-      tripDuration: 'Длительность поездки', photoHint: 'Выберите фото, перетащите его сюда или вставьте из буфера обмена.',
-      photoUrl: 'Ссылка на фото', choosePhoto: 'Выбрать фото', photoWord: 'фото', uploading: 'Загрузка…', photoReady: 'Фото готово к сохранению',
+      tripDuration: 'Длительность поездки', photoHint: 'Выберите фото на компьютере, перетащите его сюда или вставьте. Форматы JPEG, PNG или WebP.',
+      photoUrl: 'Ссылка на фото', choosePhoto: 'Выбрать на компьютере', photoWord: 'фото', uploading: 'Загрузка…', photoReady: 'Фото загружено. Нажмите «Сохранить изменения сайта» ниже.',
       photoTooLarge: 'Размер фото должен быть меньше 8 МБ.', photoTypes: 'Выберите JPEG, PNG или WebP.',
       savedStatus: 'Изменения сайта сохранены', unsavedStatus: 'Есть несохранённые изменения', savingStatus: 'Сохранение изменений…',
       savedRefresh: 'Сохранено. Обновите предпросмотр, чтобы увидеть изменения.'

@@ -108,40 +108,27 @@
     hint.textContent = localizedText('photoHint');
     control.append(hint);
 
-    const urlLabel = document.createElement('label');
-    urlLabel.className = 'photo-url-label';
-    const urlLabelText = document.createElement('span');
-    urlLabelText.dataset.adminDynamic = 'photoUrl';
-    urlLabelText.textContent = localizedText('photoUrl');
-    const urlInput = document.createElement('input');
-    urlInput.type = 'url';
-    urlInput.value = imageUrl || '';
-    urlInput.dataset.contentPath = path;
-    urlInput.autocomplete = 'url';
-    urlLabel.append(urlLabelText, urlInput);
-    control.append(urlLabel);
-
     const actions = document.createElement('div');
     actions.className = 'photo-control-actions';
-    const chooseButton = document.createElement('button');
+    const chooseButton = document.createElement('label');
     chooseButton.className = 'photo-upload-button';
-    chooseButton.type = 'button';
-    chooseButton.dataset.adminDynamic = 'choosePhoto';
-    chooseButton.textContent = localizedText('choosePhoto');
+    const chooseLabel = document.createElement('span');
+    chooseLabel.dataset.adminDynamic = 'choosePhoto';
+    chooseLabel.textContent = localizedText('choosePhoto');
     const fileInput = document.createElement('input');
     fileInput.className = 'photo-upload-input';
     fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg,image/png,image/webp';
+    fileInput.accept = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
     fileInput.setAttribute('aria-label', `${localizedText('choosePhoto')} ${title}`);
+    chooseButton.append(chooseLabel, fileInput);
     const status = document.createElement('span');
     status.className = 'photo-status';
     status.setAttribute('role', 'status');
-    chooseButton.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => {
       if (fileInput.files[0]) uploadPhoto(fileInput.files[0], control);
       fileInput.value = '';
     });
-    actions.append(chooseButton, fileInput, status);
+    actions.append(chooseButton, status);
     control.append(actions);
     editor.append(control);
     return editor;
@@ -149,7 +136,15 @@
 
   async function uploadPhoto(file, control) {
     const status = control.querySelector('.photo-status');
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    const extensionType = {
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      webp: 'image/webp'
+    }[file.name.split('.').pop()?.toLowerCase()];
+    const supportedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const mimeType = supportedTypes.includes(file.type) ? file.type : extensionType;
+    if (!supportedTypes.includes(mimeType)) {
       status.dataset.adminMessageKey = 'photoTypes';
       status.textContent = localizedText('photoTypes');
       status.dataset.state = 'error';
@@ -165,21 +160,21 @@
     status.dataset.adminMessageKey = 'uploading';
     status.textContent = localizedText('uploading');
     status.dataset.state = '';
-    const button = control.querySelector('.photo-upload-button');
-    button.disabled = true;
+    const fileInput = control.querySelector('.photo-upload-input');
+    fileInput.disabled = true;
     try {
-      const data = await request('/api/uploads', { method: 'POST', headers: { 'Content-Type': file.type }, body: file });
+      const data = await request('/api/uploads', { method: 'POST', headers: { 'Content-Type': mimeType }, body: file });
       setPath(draft, control.dataset.photoPath, data.url);
-      control.querySelector('[data-content-path]').value = data.url;
       control.querySelector('.photo-preview').src = data.url;
       markChanged();
       status.dataset.adminMessageKey = 'photoReady';
       status.textContent = localizedText('photoReady');
     } catch (error) {
+      status.dataset.adminMessageKey = '';
       status.textContent = error.message;
       status.dataset.state = 'error';
     } finally {
-      button.disabled = false;
+      fileInput.disabled = false;
     }
   }
 
