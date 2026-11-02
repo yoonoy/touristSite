@@ -18,15 +18,16 @@ button, input { font: inherit; }
 .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 23px; font-weight: 700; letter-spacing: -.5px; }
 .brand-mark { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-family: var(--serif); font-size: 20px; font-weight: 500; }
 .brand-period { color: var(--lime); }
-.main-nav { display: flex; gap: clamp(20px, 2.5vw, 36px); margin-left: 3%; font-size: 15px; }
+.main-nav { display: flex; gap: clamp(40px, 3.4vw, 52px); margin-left: 3%; font-size: 17px; }
 .main-nav a, .footer-links a { transition: opacity .2s ease; }
 .main-nav a:hover, .footer-links a:hover { opacity: .65; }
-.main-nav .admin-nav-link { display: flex; align-items: center; gap: 8px; margin-top: -8px; margin-bottom: -8px; padding: 11px 15px; border: 1px solid rgba(212,226,154,.75); color: white; }
-.main-nav .admin-nav-link span { color: var(--lime); font-size: 15px; }
+.main-nav .admin-nav-link { width: 116px; min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 12px; border: 1px solid rgba(212,226,154,.75); color: white; font-size: 15px; }
+.main-nav .admin-nav-link span { color: var(--lime); font-size: 17px; }
+.main-nav .admin-nav-link span[aria-hidden='true'] { font-size: 19px; }
 .main-nav .admin-nav-link:hover { border-color: var(--lime); background: var(--lime); color: var(--ink); opacity: 1; }
 .main-nav .admin-nav-link:hover span { color: var(--ink); }
 .language-switch { position: relative; display: inline-flex; align-items: center; }
-.language-trigger { min-width: 70px; min-height: 40px; padding: 0 11px; display: inline-flex; align-items: center; justify-content: space-between; gap: 9px; border: 1px solid rgba(255,255,255,.58); background: rgba(24,38,29,.18); color: white; cursor: pointer; font-size: 12px; }
+.language-trigger { width: 116px; min-height: 46px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: space-between; gap: 9px; border: 1px solid rgba(255,255,255,.58); background: rgba(24,38,29,.18); color: white; cursor: pointer; font-size: 15px; }
 .language-caret { color: var(--lime); font-size: 15px; line-height: 1; }
 .language-options { position: absolute; z-index: 20; top: calc(100% + 8px); right: 0; width: 158px; max-height: 170px; overflow-y: auto; padding: 4px; border: 1px solid rgba(32,43,37,.12); background: var(--paper); color: var(--ink); box-shadow: 0 12px 28px rgba(13,25,18,.2); }
 .language-options[hidden] { display: none; }
@@ -34,7 +35,8 @@ button, input { font: inherit; }
 .language-options button span + span { color: #788073; font-size: 9px; }
 .language-options button[aria-checked='true'], .language-options button:hover { background: #e7eadf; }
 .language-trigger:focus-visible, .language-options button:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
-.header-cta { font-size: 15px; display: flex; align-items: center; gap: 18px; padding: 12px 0 12px 20px; border-left: 1px solid rgba(255,255,255,.4); }
+.header-cta { position: relative; font-size: 15px; display: flex; align-items: center; gap: 18px; padding: 12px 0 12px 24px; }
+.header-cta::before { content: ''; position: absolute; top: 50%; left: 0; width: 1px; height: 28px; transform: translateY(-50%); background: rgba(255,255,255,.45); }
 .header-cta span { font-size: 20px; color: var(--lime); }
 .menu-toggle { display: none; }
 .hero { height: min(860px, 93svh); min-height: 680px; position: relative; color: #fff; overflow: hidden; background: #586c5d; }
@@ -147,9 +149,9 @@ legend { font: 500 18px var(--serif); margin-bottom: 15px; }
 @media (max-width: 900px) {
   .site-header { padding-right: 5%; padding-left: 5%; }
   .brand { font-size: 19px; }
-  .main-nav { gap: 17px; margin-left: 2%; font-size: 13px; }
+  .main-nav { gap: 12px; margin-left: 1%; font-size: 14px; }
   .header-cta { font-size: 13px; gap: 10px; padding-left: 12px; }
-  .main-nav .admin-nav-link { padding: 9px 10px; }
+  .main-nav .admin-nav-link, .language-trigger { width: 100px; min-height: 42px; }
   .section-wrap { padding-left: 8%; padding-right: 8%; }
   .intro { grid-template-columns: .8fr 2.5fr; }
   .intro-stamp { display: none; }
@@ -160,17 +162,19 @@ legend { font: 500 18px var(--serif); margin-bottom: 15px; }
   .consultation { gap: 7%; }
   .site-footer { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 700px) {
+@media (max-width: 840px) {
   .site-header { height: 76px; padding: 0 6%; }
   .brand { gap: 10px; font-size: 20px; }
   .brand-mark { width: 29px; height: 29px; font-size: 18px; }
   .menu-toggle { display: flex; flex-direction: column; gap: 6px; order: 3; width: 42px; height: 42px; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,.65); border-radius: 50%; background: transparent; color: white; cursor: pointer; }
   .menu-toggle span { width: 16px; height: 2px; background: currentColor; }
   .header-cta { margin-left: auto; margin-right: 18px; border: 0; padding: 10px 0; font-size: 12px; gap: 9px; }
-  .main-nav { position: absolute; display: none; top: 76px; left: 0; right: 0; margin: 0; padding: 20px 6% 24px; flex-direction: column; align-items: stretch; gap: 4px; background: #263a30; font-size: 16px; box-shadow: 0 14px 22px rgba(13,25,18,.2); }
+  .header-cta::before { display: none; }
+  .main-nav { position: absolute; display: none; top: 76px; left: 0; right: 0; margin: 0; padding: 20px 6% 24px; flex-direction: column; align-items: stretch; gap: 8px; background: #263a30; font-size: 17px; box-shadow: 0 14px 22px rgba(13,25,18,.2); }
   .main-nav.is-open { display: flex; }
-  .main-nav > a:not(.admin-nav-link) { min-height: 48px; display: flex; align-items: center; }
-  .main-nav .admin-nav-link { min-height: 48px; width: fit-content; margin: 7px 0; padding: 10px 14px; }
+  .main-nav > a:not(.admin-nav-link) { min-height: 52px; display: flex; align-items: center; }
+  .main-nav .admin-nav-link, .language-trigger { width: 160px; min-height: 48px; }
+  .main-nav .admin-nav-link { margin: 7px 0; }
   .language-switch { align-self: flex-start; margin-top: 8px; }
   .language-options { right: auto; left: 0; }
   .language-options button { min-height: 44px; font-size: 14px; }
