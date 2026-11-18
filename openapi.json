@@ -1,0 +1,443 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Travel Horizon API",
+    "version": "1.0.0",
+    "description": "HTTP API for public site content, admin editing, photo uploads, and consultation requests."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current Travel Horizon server"
+    }
+  ],
+  "tags": [
+    { "name": "Public" },
+    { "name": "Admin" }
+  ],
+  "paths": {
+    "/api/content": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Get site content",
+        "responses": {
+          "200": {
+            "description": "The current site content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["content"],
+                  "properties": {
+                    "content": { "$ref": "#/components/schemas/SiteContent" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Save site content for a locale",
+        "description": "Requires an admin session cookie and a same-origin request. The locale defaults to en.",
+        "security": [{ "AdminSession": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "locale": {
+                    "type": "string",
+                    "enum": ["en", "ky", "ru"],
+                    "default": "en"
+                  },
+                  "content": { "$ref": "#/components/schemas/LocaleContent" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content saved.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OkResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Sign in to the admin API",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["password"],
+                "properties": {
+                  "password": { "type": "string", "format": "password" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed in. The response sets the admin_session cookie.",
+            "headers": {
+              "Set-Cookie": {
+                "schema": { "type": "string" },
+                "description": "HttpOnly, SameSite=Strict admin session cookie."
+              }
+            },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OkResponse" } } }
+          },
+          "401": {
+            "description": "The password did not match.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "429": {
+            "description": "Too many sign-in attempts.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Sign out",
+        "description": "Expires the current admin session cookie.",
+        "responses": {
+          "200": {
+            "description": "Signed out.",
+            "headers": {
+              "Set-Cookie": {
+                "schema": { "type": "string" },
+                "description": "Expired admin_session cookie."
+              }
+            },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OkResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/consultation": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Submit a consultation request",
+        "description": "Requires a same-origin request. Successful requests are forwarded to the configured Telegram chat.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "surname", "phone", "destination"],
+                "properties": {
+                  "name": { "type": "string", "maxLength": 80 },
+                  "surname": { "type": "string", "maxLength": 80 },
+                  "phone": { "type": "string", "minLength": 6, "maxLength": 25 },
+                  "destination": { "type": "string", "enum": ["0", "1", "2"] },
+                  "locale": { "type": "string", "enum": ["en", "ky", "ru"], "default": "en" },
+                  "website": { "type": "string", "description": "Spam honeypot; leave empty." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request accepted.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OkResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": {
+            "description": "Too many consultation requests.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "502": {
+            "description": "Consultation could not be delivered.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "503": {
+            "description": "Telegram delivery is not configured.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/uploads": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Upload a photo",
+        "description": "Requires an admin session cookie and a same-origin request. Images may be JPEG, PNG, or WebP up to 8 MB.",
+        "security": [{ "AdminSession": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/jpeg": { "schema": { "type": "string", "format": "binary" } },
+            "image/png": { "schema": { "type": "string", "format": "binary" } },
+            "image/webp": { "schema": { "type": "string", "format": "binary" } }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Photo uploaded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["url"],
+                  "properties": { "url": { "type": "string" } }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "413": {
+            "description": "Photo exceeds the 8 MB limit.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "415": {
+            "description": "Unsupported image type.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/files": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "List editable public files",
+        "security": [{ "AdminSession": [] }],
+        "responses": {
+          "200": {
+            "description": "Editable public file names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["files"],
+                  "properties": {
+                    "files": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/files/{fileName}": {
+      "parameters": [
+        {
+          "name": "fileName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": ["index.html", "styles.css", "script.js"]
+          }
+        }
+      ],
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Read an editable public file",
+        "security": [{ "AdminSession": [] }],
+        "responses": {
+          "200": {
+            "description": "File name and source text.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FileResponse" } } }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Admin"],
+        "summary": "Replace an editable public file",
+        "description": "Requires an admin session cookie and a same-origin request.",
+        "security": [{ "AdminSession": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": { "content": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File saved.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FileSaveResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/uploads/{fileName}": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Get an uploaded photo",
+        "parameters": [
+          {
+            "name": "fileName",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "pattern": "^[a-f0-9]{32}\\.(jpg|png|webp)$" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uploaded photo binary data.",
+            "content": {
+              "image/jpeg": { "schema": { "type": "string", "format": "binary" } },
+              "image/png": { "schema": { "type": "string", "format": "binary" } },
+              "image/webp": { "schema": { "type": "string", "format": "binary" } }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "AdminSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "admin_session",
+        "description": "Sign in using POST /api/login. Swagger UI on the same origin will send the session cookie automatically."
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The request was invalid.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+      },
+      "Unauthorized": {
+        "description": "Sign in to continue.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+      },
+      "Forbidden": {
+        "description": "The request origin was not allowed.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+      },
+      "NotFound": {
+        "description": "The requested resource was not found.",
+        "content": { "text/plain": { "schema": { "type": "string" } } }
+      }
+    },
+    "schemas": {
+      "OkResponse": {
+        "type": "object",
+        "required": ["ok"],
+        "properties": { "ok": { "type": "boolean", "const": true } }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": { "error": { "type": "string" } }
+      },
+      "FileResponse": {
+        "type": "object",
+        "required": ["name", "content"],
+        "properties": {
+          "name": { "type": "string" },
+          "content": { "type": "string" }
+        }
+      },
+      "FileSaveResponse": {
+        "type": "object",
+        "required": ["ok", "name"],
+        "properties": {
+          "ok": { "type": "boolean", "const": true },
+          "name": { "type": "string" }
+        }
+      },
+      "SiteContent": {
+        "allOf": [
+          { "$ref": "#/components/schemas/LocaleContent" },
+          {
+            "type": "object",
+            "properties": {
+              "locales": {
+                "type": "object",
+                "properties": {
+                  "ky": { "$ref": "#/components/schemas/LocaleContent" },
+                  "ru": { "$ref": "#/components/schemas/LocaleContent" }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LocaleContent": {
+        "type": "object",
+        "required": ["hero", "journeys", "land"],
+        "properties": {
+          "hero": {
+            "type": "object",
+            "required": ["eyebrow", "titleLine", "titleEmphasis", "copyFirst", "copySecond"],
+            "properties": {
+              "eyebrow": { "type": "string" },
+              "titleLine": { "type": "string" },
+              "titleEmphasis": { "type": "string" },
+              "copyFirst": { "type": "string" },
+              "copySecond": { "type": "string" }
+            }
+          },
+          "journeys": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["label", "duration", "title", "description", "image", "alt"],
+              "properties": {
+                "label": { "type": "string" },
+                "duration": { "type": "string" },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "image": { "type": "string" },
+                "alt": { "type": "string" }
+              }
+            }
+          },
+          "land": {
+            "type": "object",
+            "required": ["titleLine", "titleEmphasis", "description", "image", "alt", "caption"],
+            "properties": {
+              "titleLine": { "type": "string" },
+              "titleEmphasis": { "type": "string" },
+              "description": { "type": "string" },
+              "image": { "type": "string" },
+              "alt": { "type": "string" },
+              "caption": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,8 +2,15 @@ const http = require('node:http');
 const { createHash, randomBytes, timingSafeEqual } = require('node:crypto');
 const { mkdir, readFile, rename, writeFile } = require('node:fs/promises');
 const path = require('node:path');
+const { Pool } = require('pg');
+const swaggerUi = require('swagger-ui-dist');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL must point to a PostgreSQL database.');
+  process.exit(1);
+}
 
 const HOST = '127.0.0.1';
 const PORT = Number(process.env.PORT || 4173);
@@ -12,6 +19,14 @@ const ADMIN_DIR = path.join(__dirname, 'admin');
 const DATA_DIR = path.join(__dirname, 'data');
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const CONTENT_FILE = path.join(DATA_DIR, 'content.json');
+const OPENAPI_FILE = path.join(__dirname, 'openapi.json');
+const SWAGGER_UI_DIR = swaggerUi.getAbsoluteFSPath();
+const SWAGGER_UI_ASSETS = new Map([
+  ['swagger-ui.css', 'text/css; charset=utf-8'],
+  ['swagger-ui-bundle.js', 'text/javascript; charset=utf-8'],
+  ['swagger-ui-standalone-preset.js', 'text/javascript; charset=utf-8']
+]);
+const database = new Pool({ connectionString: process.env.DATABASE_URL });
 const SESSION_TTL = 12 * 60 * 60 * 1000;
 const MAX_BODY_SIZE = 1_000_000;
 const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
@@ -157,14 +172,112 @@ function isValidContent(content) {
   return heroValid && landValid && journeysValid;
 }
 
-async function writeJsonFile(filePath, value) {
-  const tempPath = `${filePath}.${randomBytes(6).toString('hex')}.tmp`;
-  await writeFile(tempPath, `${JSON.stringify(value, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
-  await rename(tempPath, filePath);
+async function initializeDatabase() {
+  await database.query(`
+    CREATE TABLE IF NOT EXISTS site_content (
+      id SMALLINT PRIMARY KEY CHECK (id = 1),
+      content JSONB NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+
+  const result = await database.query('SELECT 1 FROM site_content WHERE id = 1');
+  if (result.rowCount === 0) {
+    const initialContent = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
+    await database.query(
+      'INSERT INTO site_content (id, content) VALUES (1, $1::jsonb) ON CONFLICT (id) DO NOTHING',
+      [JSON.stringify(initialContent)]
+    );
+  }
+}
+
+async function getSiteContent() {
+  const result = await database.query('SELECT content FROM site_content WHERE id = 1');
+  if (result.rowCount !== 1) throw new Error('The site content row is missing from PostgreSQL.');
+  return result.rows[0].content;
+}
+
+async function saveLocalizedContent(locale, localeContent) {
+  const client = await database.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await client.query('SELECT content FROM site_content WHERE id = 1 FOR UPDATE');
+    if (result.rowCount !== 1) throw new Error('The site content row is missing from PostgreSQL.');
+    const savedContent = result.rows[0].content;
+    const nextContent = locale === 'en'
+      ? { ...savedContent, ...localeContent }
+      : { ...savedContent, locales: { ...savedContent.locales, [locale]: localeContent } };
+    await client.query(
+      'UPDATE site_content SET content = $1::jsonb, updated_at = NOW() WHERE id = 1',
+      [JSON.stringify(nextContent)]
+    );
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 async function handleRequest(request, response) {
   const url = new URL(request.url, `http://${request.headers.host || `${HOST}:${PORT}`}`);
+
+  if (request.method === 'GET' && url.pathname === '/api-docs') {
+    response.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"
+    });
+    response.end(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Travel Horizon API Documentation</title>
+    <link rel="stylesheet" href="/api-docs/swagger-ui.css">
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="/api-docs/swagger-ui-bundle.js"></script>
+    <script src="/api-docs/swagger-ui-standalone-preset.js"></script>
+    <script>
+      window.onload = () => SwaggerUIBundle({
+        url: '/api-docs/openapi.json',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: 'StandaloneLayout'
+      });
+    </script>
+  </body>
+</html>`);
+    return;
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api-docs/openapi.json') {
+    const specification = await readFile(OPENAPI_FILE);
+    response.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    response.end(specification);
+    return;
+  }
+
+  const swaggerAsset = url.pathname.match(/^\/api-docs\/([^/]+)$/)?.[1];
+  if (request.method === 'GET' && swaggerAsset && SWAGGER_UI_ASSETS.has(swaggerAsset)) {
+    const asset = await readFile(path.join(SWAGGER_UI_DIR, swaggerAsset));
+    response.writeHead(200, {
+      'Content-Type': SWAGGER_UI_ASSETS.get(swaggerAsset),
+      'Cache-Control': 'public, max-age=3600',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    response.end(asset);
+    return;
+  }
 
   if (request.method === 'POST' && url.pathname === '/api/login') {
     const address = request.socket.remoteAddress || 'local';
@@ -205,7 +318,7 @@ async function handleRequest(request, response) {
   }
 
   if (url.pathname === '/api/content' && request.method === 'GET') {
-    const content = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
+    const content = await getSiteContent();
     sendJson(response, 200, { content });
     return;
   }
@@ -262,7 +375,7 @@ async function handleRequest(request, response) {
       }
     }
 
-    const savedContent = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
+    const savedContent = await getSiteContent();
     const destination = savedContent.locales?.[locale]?.journeys?.[destinationIndex]?.title
       || savedContent.journeys[destinationIndex].title;
     const message = [
@@ -314,11 +427,7 @@ async function handleRequest(request, response) {
       sendJson(response, 400, { error: 'Some text or photo values are invalid.' });
       return;
     }
-    const savedContent = JSON.parse(await readFile(CONTENT_FILE, 'utf8'));
-    const nextContent = locale === 'en'
-      ? { ...savedContent, ...body.content }
-      : { ...savedContent, locales: { ...savedContent.locales, [locale]: body.content } };
-    await writeJsonFile(CONTENT_FILE, nextContent);
+    await saveLocalizedContent(locale, body.content);
     sendJson(response, 200, { ok: true });
     return;
   }
@@ -420,7 +529,13 @@ const server = http.createServer((request, response) => {
   });
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`Travel Horizon is running at http://${HOST}:${PORT}`);
-  console.log(`Admin panel: http://${HOST}:${PORT}/admin`);
+initializeDatabase().then(() => {
+  server.listen(PORT, HOST, () => {
+    console.log(`Travel Horizon is running at http://${HOST}:${PORT}`);
+    console.log(`Admin panel: http://${HOST}:${PORT}/admin`);
+  });
+}).catch((error) => {
+  console.error('Could not initialize the PostgreSQL database:', error.message);
+  process.exitCode = 1;
+  database.end();
 });
